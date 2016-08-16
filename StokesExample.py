@@ -25,7 +25,7 @@ MoogRaw.Phrase.rawData[5].plot(ax=ax1)
 MoogRaw.Phrase.rawData[6].plot(ax=ax1)
 #Moog.Phrase.convolvedData[0].plot(ax=ax2)
 
-MoogProcessed = Moog960.SyntheticPhrase.fromFile(None, filename='./Output/StokesExample_T3600_G4.00_B0.00_raw.fits')
+#MoogProcessed = Moog960.SyntheticPhrase.fromFile(None, filename='./Output/StokesExample_T3600_G4.00_B0.00_raw.fits')
 
 fig.show()
 
