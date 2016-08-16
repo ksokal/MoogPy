@@ -1,7 +1,7 @@
 import MoogTools
 import Moog960
 import SpectralTools
-import pyfits
+import astropy.io.fits as pyfits
 import matplotlib.pyplot as pyplot
 
 
