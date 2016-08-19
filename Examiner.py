@@ -8,7 +8,7 @@ fig.clear()
 ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
 
 vsini = 5.8
-R = 40000.0
+R = 45000.0
 
 datafile = './Output/StokesExample_T3600_G4.00_B3.00_raw.fits'
 Melody_B3 = Moog960.SyntheticMelody(filename = datafile)

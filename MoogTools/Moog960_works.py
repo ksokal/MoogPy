@@ -1035,6 +1035,10 @@ class SyntheticMelody( Melody ):
                     convolvedLabels=[mergedLabel])
             self.addPhrases(phrases = [newPhrase])
             
+        #have to save this    
+        # print 'returning'
+        #return [mergedSpectra, mergedLabel] 
+    
 
 class Score( object ):
     """
