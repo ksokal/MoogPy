@@ -359,8 +359,10 @@ class SyntheticPhrase( Phrase ):
                 
 
             if parent != None:
+            	print 'The prob lies here maybe'
                 parent.parent.convolved_labels.append(Label(parameters, reference=convolvedData[-1], Phrase=self,
                        Spectrum=convolvedData[-1]))
+            	print 'but it did pass this'
 
             #rawLabels = []
             #interpolatedLabels = []
@@ -874,10 +876,11 @@ class Melody( object ):
 
 
 class ObservedMelody( Melody ):
-    def __init__(self, phrases = [], filename=None, label=None, header=None, Score=None):
+    def __init__(self, phrases = [], filename=None, label=None, header=None, Score=None, parent=None):
         super(ObservedMelody, self).__init__(phrases=phrases, filename=filename, 
                 label=label, header=header, Score=Score)
-
+        #ks added the parent =none bit and the parent = parent bits
+        self.parent=parent
     @classmethod
     def fromFile(self, filename=None, label=None, parent=None):
         info = pyfits.info(filename, output='')
@@ -937,16 +940,20 @@ class ObservedMelody( Melody ):
                            
 
 class SyntheticMelody( Melody ):
-    def __init__(self, phrases = [], filename=None, label=None, header=None, Score=None):
+    def __init__(self, phrases = [], filename=None, label=None, header=None, Score=None, parent=None):
         super(SyntheticMelody, self).__init__(phrases = phrases, filename=filename,
                 label=label, header=header, Score=Score)
+		
+        #ks added the parent =none bit and the parent = parent bits
+        self.parent=parent
+        print 'I am settting the parent here?', parent       
         if len(self.phrases) == 0:
-            self.loadMelody()
+                self.loadMelody()
         else:
-            self.Teff = self.header.get("TEFF")
-            self.logg = self.header.get("LOGG")
-            self.B = self.header.get("BFIELD")
-            self.contents = self.header.get("SPECTRUM_CONTENTS")
+                self.Teff = self.header.get("TEFF")
+                self.logg = self.header.get("LOGG")
+                self.B = self.header.get("BFIELD")
+                self.contents = self.header.get("SPECTRUM_CONTENTS")
 
     def loadMelody(self):
         info = pyfits.info(self.filename, output='')
@@ -1092,30 +1099,38 @@ class Score( object ):
         This Score object contains many melodies.
     """
     def __init__(self, melodies = [], directory=None, observed=None, suffix='raw'):
+        print 'starting here in score init'
         self.syntheticMelodies = melodies
         self.directory = directory
         self.observed = observed
         self.suffix = suffix
+        print 'ok in defining the score, then to load melodies'
         self.loadMelodies()
+        print 'loaded melodies'
         self.computeGridPoints()
         #self.getMelodyParams(retLabels = False)
 
     def loadMelodies(self):
-        melodyFiles = glob.glob(self.directory+'*'+self.suffix+'.fits')
-        self.syntheticMelodies = []
-        self.raw_labels = []
-        self.interpolated_labels = []
-        self.integrated_labels = []
-        self.convolved_labels = []
-        self.observed_labels = []
-        for melody in melodyFiles:
-            print("%s" % melody)
-            self.syntheticMelodies.append(SyntheticMelody(filename=melody, parent=self))
-
-        if not(self.observed==None):
-            self.ObservedMelodies = [ObservedMelody.fromFile(filename=self.observed, 
-                label='TWHydra', parent=self)]
-            self.ObservedMelodies[0].loadData()
+		print('now to load melodies')    
+		melodyFiles = glob.glob(self.directory+'*'+self.suffix+'.fits')
+		self.syntheticMelodies = []
+		self.raw_labels = []
+		self.interpolated_labels = []
+		self.integrated_labels = []
+		self.convolved_labels = []
+		self.observed_labels = []
+		print 'MADE IT HERE'
+		for melody in melodyFiles:
+			print("%s" % melody)
+			print("self", self)
+			
+			self.syntheticMelodies.append(SyntheticMelody(filename=melody, parent=self))
+			
+		print 'DID THAT'
+		if not(self.observed==None):
+			self.ObservedMelodies = [ObservedMelody.fromFile(filename=self.observed, 
+				label='TWHydra', parent=self)]
+		self.ObservedMelodies[0].loadData()
 
     def getMelodyParams(self, retLabels=True):
         raw_labels = []
