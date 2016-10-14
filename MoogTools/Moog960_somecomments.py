@@ -1823,14 +1823,13 @@ class Score( object ):
         #print "Blend Finished!"
         blendedLabel.Spectrum.rv(rv)
         #print "RV Finished!"
-        blendedLabel.Spectrum.bin(self.compositeObservedLabel.Spectrum.wl, pad=0.0)
+        blendedLabel.Spectrum.bin(self.compositeObservedLabel.Spectrum.wl, pad=0.0, subsample=0)
         #print "Binning Finished!"
         difference = blendedLabel.Spectrum - self.compositeObservedLabel.Spectrum
         #print "Difference Finished!"
         lnlike = -0.5*numpy.sum( 
                   (difference/self.compositeObservedLabel.Spectrum).flux_I**2.0)
         #print "ln_likelihood Finished!"
-        #print lnlike
         if ax != None:
             ax.clear()
             blendedLabel.Spectrum.plot(ax=ax)
