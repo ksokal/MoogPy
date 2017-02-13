@@ -15,7 +15,7 @@ MoogRaw = MoogTools.MoogStokes(moogPyConfigFile, fileBase = 'example')
 MoogRaw.run(saveRaw=True)
 
 
-
+#this is only to plot
 MoogRaw.Phrase.rawData[0].plot(ax=ax1)
 MoogRaw.Phrase.rawData[1].plot(ax=ax1)
 MoogRaw.Phrase.rawData[2].plot(ax=ax1)

@@ -429,6 +429,7 @@ class Spectrum( object ):
         pad [None/float] pad contains the value to be stored in the flux points
              which are not spanned by a complete bin.
         """
+<<<<<<< HEAD
 
 <<<<<<< HEAD
         if subsample == 0:
@@ -517,6 +518,13 @@ class Spectrum( object ):
             if i==0:
                 lowerBound = newWl[0]-deltaWl*(factor/2.0)
 >>>>>>> blah
+=======
+
+        if subsample == 0:
+            if not(self.flux_I is None):
+                I = scipy.interpolate.splrep(self.wl, self.flux_I)
+                newSpec_I = scipy.interpolate.splev(newWl, I, ext=1)
+>>>>>>> 4514c3f9fe1fbe9c030bbd27c8ed12b001206916
             else:
                 newSpec_I = None
             if not(self.flux_Q is None):
@@ -524,6 +532,9 @@ class Spectrum( object ):
                 newSpec_Q = scipy.interpolate.splev(newWl, Q, ext=1)
             else:
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4514c3f9fe1fbe9c030bbd27c8ed12b001206916
                 newSpec_Q = None
             if not(self.flux_U is None):
                 U = scipy.interpolate.splrep(self.wl, self.flux_U)
@@ -647,6 +658,7 @@ class Spectrum( object ):
                         newSpec_V.append(scipy.interpolate.splev(newWl[i], V, ext=1))
                     if not(self.continuum is None):
                         newSpec_continuum.append(scipy.interpolate.splev(newWl[i], continuum, ext=1))
+<<<<<<< HEAD
 =======
                 upperBound = (newWl[i]+newWl[i+1])/2.0
             inBin = scipy.where( (interpWl > lowerBound) & (
@@ -699,11 +711,16 @@ class Spectrum( object ):
                 if not(self.continuum_I is None):
                     newSpec_continuum.append(scipy.interpolate.splev(newWl[i], continuum, ext=1))
 >>>>>>> blah
+=======
+>>>>>>> 4514c3f9fe1fbe9c030bbd27c8ed12b001206916
                 
                     #print "ERROR!!! newWave is not appended!"
                     #raw_input()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4514c3f9fe1fbe9c030bbd27c8ed12b001206916
             self.wl = numpy.array(newWave)
             if not(self.flux_I is None):
                 self.flux_I = numpy.array(newSpec_I)
@@ -715,6 +732,7 @@ class Spectrum( object ):
                 self.flux_V = numpy.array(newSpec_V)
             if not(self.continuum is None):
                 self.continuum = numpy.array(newSpec_continuum)
+<<<<<<< HEAD
 =======
         self.wl = numpy.array(newWave)
         if not(self.flux_I is None):
@@ -729,6 +747,8 @@ class Spectrum( object ):
             self.continuum = numpy.array(newSpec_continuum)
         #"""
 >>>>>>> blah
+=======
+>>>>>>> 4514c3f9fe1fbe9c030bbd27c8ed12b001206916
 
     def rotate(self, angle=0.0, wlPoint = None):
         """
