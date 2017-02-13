@@ -430,16 +430,100 @@ class Spectrum( object ):
              which are not spanned by a complete bin.
         """
 
+<<<<<<< HEAD
         if subsample == 0:
             if not(self.flux_I is None):
                 I = scipy.interpolate.splrep(self.wl, self.flux_I)
                 newSpec_I = scipy.interpolate.splev(newWl, I, ext=1)
+=======
+        """
+        if self.flux_I != None:
+            I = scipy.interpolate.splrep(self.wl, self.flux_I)
+            newSpec_I = scipy.interpolate.splev(newWl, I, ext=1)
+        else:
+            newSpec_I = None
+        if self.flux_Q != None:
+            Q = scipy.interpolate.splrep(self.wl, self.flux_Q)
+            newSpec_Q = scipy.interpolate.splev(newWl, Q, ext=1)
+        else:
+            newSpec_Q = None
+        if self.flux_U != None:
+            U = scipy.interpolate.splrep(self.wl, self.flux_U)
+            newSpec_U = scipy.interpolate.splev(newWl, U, ext=1)
+        else:
+            newSpec_U = None
+        if self.flux_V != None:
+            V = scipy.interpolate.splrep(self.wl, self.flux_V)
+            newSpec_V = scipy.interpolate.splev(newWl, V, ext=1)
+        else:
+            newSpec_V = None
+        if self.continuum != None:
+            continuum = scipy.interpolate.splrep(self.wl, self.continuum)
+            newSpec_continuum = scipy.interpolate.splev(newWl, continuum, ext=1)
+        else:
+            newSpec_continuum = None
+
+        self.wl = newWl
+        if self.flux_I != None:
+            self.flux_I = numpy.array(newSpec_I)
+        if self.flux_Q != None:
+            self.flux_Q = numpy.array(newSpec_Q)
+        if self.flux_U != None:
+            self.flux_U = numpy.array(newSpec_U)
+        if self.flux_V != None:
+            self.flux_V = numpy.array(newSpec_V)
+        if self.continuum != None:
+            self.continuum = numpy.array(newSpec_continuum)
+        #"""
+
+        #"""
+        factor = 5.0
+        deltaWl = numpy.median(numpy.diff(newWl))/factor
+        if pad == None:
+            #interpWl = numpy.arange(self.wl[0], self.wl[-1], deltaWl)
+            npts = int((self.wl[-1]-self.wl[0])/deltaWl)
+            interpWl = numpy.linspace(self.wl[0], self.wl[-1], num=npts)
+        else:
+            #interpWl = numpy.arange(newWl[0], newWl[-1], deltaWl)
+            npts = int((newWl[-1]-newWl[0])/deltaWl)
+            interpWl = numpy.linspace(newWl[0], newWl[-1], num=npts)
+        newWave = []
+
+        if not(self.flux_I is None):
+            I = scipy.interpolate.splrep(self.wl, self.flux_I)
+            I_interp = scipy.interpolate.splev(interpWl, I, ext=1)
+            if pad != None:
+                I_interp[I_interp==0]=1.0
+            newSpec_I = []
+        if not(self.flux_Q is None):
+            Q = scipy.interpolate.splrep(self.wl, self.flux_Q)
+            Q_interp = scipy.interpolate.splev(interpWl, Q, ext=1)
+            newSpec_Q = numpy.zeros(len(newWl))
+        if not(self.flux_U is None):
+            U = scipy.interpolate.splrep(self.wl, self.flux_U)
+            U_interp = scipy.interpolate.splev(interpWl, U, ext=1)
+            newSpec_U = numpy.zeros(len(newWl))
+        if not(self.flux_V is None):
+            V = scipy.interpolate.splrep(self.wl, self.flux_V)
+            V_interp = scipy.interpolate.splev(interpWl, V, ext=1)
+            if pad != None:
+                V_interp[V_interp==0]=0.0
+            newSpec_V = []
+        if not(self.continuum is None):
+            continuum = scipy.interpolate.splrep(self.wl, self.continuum)
+            cont_interp = scipy.interpolate.splev(interpWl, continuum, ext=1)
+            newSpec_continuum = numpy.zeros(len(newWl))
+        for i in range(len(newWl)):
+            if i==0:
+                lowerBound = newWl[0]-deltaWl*(factor/2.0)
+>>>>>>> blah
             else:
                 newSpec_I = None
             if not(self.flux_Q is None):
                 Q = scipy.interpolate.splrep(self.wl, self.flux_Q)
                 newSpec_Q = scipy.interpolate.splev(newWl, Q, ext=1)
             else:
+<<<<<<< HEAD
                 newSpec_Q = None
             if not(self.flux_U is None):
                 U = scipy.interpolate.splrep(self.wl, self.flux_U)
@@ -563,10 +647,63 @@ class Spectrum( object ):
                         newSpec_V.append(scipy.interpolate.splev(newWl[i], V, ext=1))
                     if not(self.continuum is None):
                         newSpec_continuum.append(scipy.interpolate.splev(newWl[i], continuum, ext=1))
+=======
+                upperBound = (newWl[i]+newWl[i+1])/2.0
+            inBin = scipy.where( (interpWl > lowerBound) & (
+                interpWl <= upperBound))[0]
+            if (len(inBin) > 1):
+                newWave.append(newWl[i])
+                denom = interpWl[inBin][-1] - interpWl[inBin][0]
+                if not(self.flux_I is None):
+                    num=scipy.integrate.simps(I_interp[inBin], 
+                            x=interpWl[inBin])
+                    newSpec_I.append(num/denom)
+                if not(self.flux_Q is None):
+                    num=scipy.integrate.simps(Q_interp[inBin], 
+                            x=interpWl[inBin])
+                    newSpec_Q[i] = num/denom
+                if not(self.flux_U is None):
+                    num=scipy.integrate.simps(U_interp[inBin], 
+                            x=interpWl[inBin])
+                    newSpec_U[i] = num/denom
+                if not(self.flux_V is None):
+                    num=scipy.integrate.simps(V_interp[inBin], 
+                            x=interpWl[inBin])
+                    newSpec_V.append(num/denom)
+                if not(self.continuum is None):
+                    num=scipy.integrate.simps(cont_interp[inBin], 
+                            x=interpWl[inBin])
+                    newSpec_continuum[i] = num/denom
+            elif (len(inBin) == 1):
+                newWave.append(newWl[i])
+                if not(self.flux_I is None):
+                    newSpec_I.append(I_interp[inBin][0])
+                if not(self.flux_Q is None):
+                    newSpec_Q.append(Q_interp[inBin][0])
+                if not(self.flux_U is None):
+                    newSpec_U.append(U_interp[inBin][0])
+                if not(self.flux_V is None):
+                    newSpec_V.append(V_interp[inBin][0])
+                if not(self.continuum is None):
+                    newSpec_continuum.append(cont_interp[inBin][0])
+            else:
+                newWave.append(newWl[i])
+                if not(self.flux_I is None):
+                    newSpec_I.append(scipy.interpolate.splev(newWl[i], I, ext=1))
+                if not(self.flux_Q is None):
+                    newSpec_Q.append(scipy.interpolate.splev(newWl[i], Q, ext=1))
+                if not(self.flux_U is None):
+                    newSpec_U.append(scipy.interpolate.splev(newWl[i], U, ext=1))
+                if not(self.flux_V is None):
+                    newSpec_V.append(scipy.interpolate.splev(newWl[i], V, ext=1))
+                if not(self.continuum_I is None):
+                    newSpec_continuum.append(scipy.interpolate.splev(newWl[i], continuum, ext=1))
+>>>>>>> blah
                 
                     #print "ERROR!!! newWave is not appended!"
                     #raw_input()
 
+<<<<<<< HEAD
             self.wl = numpy.array(newWave)
             if not(self.flux_I is None):
                 self.flux_I = numpy.array(newSpec_I)
@@ -578,6 +715,20 @@ class Spectrum( object ):
                 self.flux_V = numpy.array(newSpec_V)
             if not(self.continuum is None):
                 self.continuum = numpy.array(newSpec_continuum)
+=======
+        self.wl = numpy.array(newWave)
+        if not(self.flux_I is None):
+            self.flux_I = numpy.array(newSpec_I)
+        if not(self.flux_Q is None):
+            self.flux_Q = numpy.array(newSpec_Q)
+        if not(self.flux_U is None):
+            self.flux_U = numpy.array(newSpec_U)
+        if not(self.flux_V is None):
+            self.flux_V = numpy.array(newSpec_V)
+        if not(self.continuum is None):
+            self.continuum = numpy.array(newSpec_continuum)
+        #"""
+>>>>>>> blah
 
     def rotate(self, angle=0.0, wlPoint = None):
         """
@@ -880,19 +1031,19 @@ class Spectrum( object ):
         newV = None
         newCont = None
 
-        if (self.flux_I != None) & (other.flux_I != None):
+        if not(self.flux_I is None) and not(other.flux_I is None):
             I = scipy.interpolate.splrep(other.wl, other.flux_I)
             newI = self.flux_I[overlap]*fraction + scipy.interpolate.splev(newWl, I)*(1.0-fraction)
-        if (self.flux_Q != None) & (other.flux_Q != None):
+        if not(self.flux_Q is None) and not(other.flux_Q is None):
             Q = scipy.interpolate.splrep(other.wl, other.flux_Q)
             newQ = self.flux_Q[overlap]*fraction + scipy.interpolate.splev(newWl, Q)*(1.0-fraction)
-        if (self.flux_U != None) & (other.flux_U != None):
+        if not(self.flux_U is None) and not(other.flux_U is None):
             U = scipy.interpolate.splrep(other.wl, other.flux_U)
             newU = self.flux_U[overlap]*fraction + scipy.interpolate.splev(newWl, U)*(1.0-fraction)
-        if (self.flux_V != None) & (other.flux_V != None):
+        if not(self.flux_V is None) and not(other.flux_V is None):
             V = scipy.interpolate.splrep(other.wl, other.flux_V)
             newV = self.flux_V[overlap]*fraction + scipy.interpolate.splev(newWl, V)*(1.0-fraction)
-        if (self.continuum != None) & (other.continuum != None):
+        if not(self.continuum is None) and not(other.continuum is None):
             continuum = scipy.interpolate.splrep(other.wl, other.flux_V)
             newCont = self.continuum[overlap]*fraction + scipy.interpolate.splev(newWl, continuum)*(1.0-fraction)
 
@@ -951,14 +1102,14 @@ class Spectrum( object ):
 
             new_x = numpy.append(x1, x2[unique2])
     
-            if (self.flux_I != None) & (second.flux_I != None):
+            if not(self.flux_I is None) and not(second.flux_I is None):
                 I1 = self.flux_I
                 I2 = second.flux_I
                 I1[numpy.isnan(I1)] = 0.0
                 I2[numpy.isnan(I2)] = 0.0
                 I = scipy.interpolate.splrep(x2, I2)
                 Iinterp = scipy.interpolate.splev(x1[overlap], I)
-                if (self.dflux_I != None) & (second.dflux_I != None):
+                if not(self.dflux_I is None) and not(second.dflux_I is None):
                     dI1 = self.dflux_I
                     dI2 = second.dflux_I
                     dI1[numpy.isnan(dI1)] = 1000000.0
@@ -993,7 +1144,7 @@ class Spectrum( object ):
             else:
                 new_dI = None
                 new_I = None
-            if (self.flux_Q != None) & (second.flux_Q != None):
+            if not(self.flux_Q is None) and not(second.flux_Q is None):
                 Q1 = self.flux_Q
                 Q2 = second.flux_Q
                 Q1[numpy.isnan(Q1)] = 0.0
@@ -1004,7 +1155,7 @@ class Spectrum( object ):
                 new_Q = numpy.append(numpy.append(Q1[unique1], mergedQ), Q2[unique2])
             else:
                 new_Q = None
-            if (self.flux_U != None) & (second.flux_U != None):
+            if not(self.flux_U is None) and not(second.flux_U is None):
                 U1 = self.flux_U
                 U2 = second.flux_U
                 U1[numpy.isnan(U1)] = 0.0
@@ -1015,7 +1166,7 @@ class Spectrum( object ):
                 new_U = numpy.append(numpy.append(U1[unique1], mergedU), U2[unique2])
             else:
                 new_U = None
-            if (self.flux_V != None) & (second.flux_V != None):
+            if not(self.flux_V is None) and not(second.flux_V is None):
                 V1 = self.flux_V
                 V2 = second.flux_V
                 V1[numpy.isnan(V1)] = 0.0
@@ -1026,7 +1177,7 @@ class Spectrum( object ):
                 new_V = numpy.append(numpy.append(V1[unique1], mergedV), V2[unique2])
             else:
                 new_V = None
-            if (self.continuum != None) & (second.continuum != None):
+            if not(self.continuum is None) and not(second.continuum is None):
                 C1 = self.continuum
                 C2 = second.continuum
                 C1[numpy.isnan(C1)] = 0.0
@@ -1039,13 +1190,13 @@ class Spectrum( object ):
                 new_C = None
         else:
             new_x = numpy.append(x1, x2)
-            if (self.flux_I != None) & (second.flux_I != None):
+            if not(self.flux_I is None) and not(second.flux_I is None):
                 I1 = self.flux_I
                 I2 = second.flux_I
                 I1[numpy.isnan(I1)] = 0.0
                 I2[numpy.isnan(I2)] = 0.0
                 new_I = numpy.append(I1, I2)
-                if (self.dflux_I != None) & (second.dflux_I != None):
+                if not(self.dflux_I is None) and not(second.dflux_I is None):
                     dI1 = self.dflux_I
                     dI2 = second.dflux_I
                     dI1[numpy.isnan(dI1)] = 0.0
@@ -1056,7 +1207,7 @@ class Spectrum( object ):
             else:
                 new_I = None
                 new_dI = None
-            if (self.flux_Q != None) & (second.flux_Q != None):
+            if not(self.flux_Q is None) and not(second.flux_Q is None):
                 Q1 = self.flux_Q
                 Q2 = second.flux_Q
                 Q1[numpy.isnan(Q1)] = 0.0
@@ -1064,7 +1215,7 @@ class Spectrum( object ):
                 new_Q = numpy.append(Q1, Q2)
             else:
                 new_Q = None
-            if (self.flux_U != None) & (second.flux_U != None):
+            if not(self.flux_U is None) and not(second.flux_U is None):
                 U1 = self.flux_U
                 U2 = second.flux_U
                 U1[numpy.isnan(U1)] = 0.0
@@ -1072,7 +1223,7 @@ class Spectrum( object ):
                 new_U = numpy.append(U1, U2)
             else:
                 new_U = None
-            if (self.flux_V != None) & (second.flux_V != None):
+            if not(self.flux_V is None) and not(second.flux_V is None):
                 V1 = self.flux_V
                 V2 = second.flux_V
                 V1[numpy.isnan(V1)] = 0.0
@@ -1080,7 +1231,7 @@ class Spectrum( object ):
                 new_V = numpy.append(V1, V2)
             else:
                 new_V = None
-            if (self.continuum != None) & (second.continuum != None):
+            if not(self.continuum is None) and not(second.continuum is None):
                 C1 = self.continuum
                 C2 = second.continuum
                 C1[numpy.isnan(C1)] = 0.0
