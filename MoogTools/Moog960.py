@@ -1200,13 +1200,8 @@ class Score( object ):
     """
         This Score object contains many melodies.
     """
-<<<<<<< HEAD
-    def __init__(self, melodies = [], directory=None, observed=None, suffix='raw'):
-        print 'starting here in score init'
-=======
     def __init__(self, melodies = [], directory='', observed=None, suffix='raw'):
         self.ID = ''.join(random.choice(string.ascii_letters) for _ in range(10))
->>>>>>> upstream/master
         self.syntheticMelodies = melodies
         self.directory = directory
         self.observed = observed
@@ -1218,29 +1213,10 @@ class Score( object ):
         #self.getMelodyParams(retLabels = False)
 
     def loadMelodies(self):
-<<<<<<< HEAD
-		print('now to load melodies')    
-		melodyFiles = glob.glob(self.directory+'*'+self.suffix+'.fits')
-		self.syntheticMelodies = []
-		self.raw_labels = []
-		self.interpolated_labels = []
-		self.integrated_labels = []
-		self.convolved_labels = []
-		self.observed_labels = []
-		print 'MADE IT HERE'
-		for melody in melodyFiles:
-			print("%s" % melody)
-			print("self", self)
-			
-			self.syntheticMelodies.append(SyntheticMelody(filename=melody, parent=self))
-			
-		print 'DID THAT'
-		if not(self.observed==None):
-			self.ObservedMelodies = [ObservedMelody.fromFile(filename=self.observed, 
-				label='TWHydra', parent=self)]
-		self.ObservedMelodies[0].loadData()
-=======
-        melodyFiles = glob.glob(self.directory+'*'+self.suffix+'.fits')
+        if len(self.files) == 0:
+            melodyFiles = glob.glob(self.directory+'*'+self.suffix+'.fits')
+        else:
+            melodyFiles = self.files
         self.syntheticMelodies = []
         self.raw_labels = {}
         self.interpolated_labels = {} 
@@ -1255,7 +1231,6 @@ class Score( object ):
             self.ObservedMelodies = [ObservedMelody(filename=self.observed, 
                 label='TWHydra', Score=self)]
             self.ObservedMelodies[0].loadData()
->>>>>>> upstream/master
 
     def getMelodyParams(self, retLabels=True):
         raw_labels = []
@@ -1622,47 +1597,6 @@ class Score( object ):
                 if len(spectrum) > 0:
                     spectra.append(spectrum)
                     parameters.append(params)
-<<<<<<< HEAD
-            """
-            for phrase in numpy.array(melody.phrases)[numpy.array(melody.selectedPhrases)==True]:
-                if keySignature == "INTERPOLATED":
-                    for interpolated in phrase.interpolatedLabels:
-                        if interpolated in selectedLabels:
-                            sp, p = melody.perform(interpolated,
-                                keySignature=keySignature)
-                            spectra.append(sp)
-                            params.append(p)
-                            labels.append(interpolated)
-                if keySignature == "INTEGRATED":
-                    for integrated in phrase.integratedLabels:
-                        if integrated in selectedLabels:
-                            sp, p = melody.perform(integrated,
-                                    keySignature=keySignature)
-                            spectra.append(sp)
-                            params.append(p)
-                            labels.append(integrated)
-                if keySignature == "CONVOLVED":
-                    for convolved in self.parent.convolved_labels:
-                        if convolved.parameters["SELECTED"]:
-                            if convolved in selectedLabels:
-                                sp, p = melody.perform(convolved,
-                                        keySignature=keySignature)
-                                spectrum.append(sp)
-                                params.append(p)
-                                labels.append(convolved)
-                if keySignature == "MERGED":
-                    for merged in phrase.mergedLabels:
-                        if merged.parameters["SELECTED"]:
-                            if merged in mergedLabels:
-                                sp, p = melody.perform(merged,
-                                        keySignature=keySignature)
-                                spectrum.append(sp)
-                                params.append(p)
-                                labels.append(merged)
-            #"""
-
-=======
->>>>>>> upstream/master
         else:
             for label in selectedLabels:
                 if label.parameters["SELECTED"]:
